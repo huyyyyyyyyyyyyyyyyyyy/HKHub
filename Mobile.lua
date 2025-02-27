@@ -134,7 +134,7 @@ for i, cat in pairs(categories) do
     pageFrame.Parent = contentPanel
     
     for j, sub in pairs(cat[2]) do
-        local subButton = Instance.new("TextLabel")
+        local subButton = Instance.new("TextButton")
         subButton.Size = UDim2.new(1, 0, 0, 30)
         subButton.Position = UDim2.new(0, 0, 0, (j - 1) * 35)
         subButton.Text = sub
