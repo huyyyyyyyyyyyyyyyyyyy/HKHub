@@ -2,7 +2,6 @@
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService") -- HttpService to fetch the script from URL
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
 
@@ -134,7 +133,7 @@ for i, cat in pairs(categories) do
     pageFrame.Parent = contentPanel
     
     for j, sub in pairs(cat[2]) do
-        local subButton = Instance.new("TextButton")
+        local subButton = Instance.new("TextLabel")
         subButton.Size = UDim2.new(1, 0, 0, 30)
         subButton.Position = UDim2.new(0, 0, 0, (j - 1) * 35)
         subButton.Text = sub
@@ -147,17 +146,4 @@ for i, cat in pairs(categories) do
         activePage = pageFrame
         pageFrame.Visible = true
     end)
-end
-
---// Load External Lua Script and Execute
-local url = "https://raw.githubusercontent.com/huyyyyyyyyyyyyyyyyyyy/HKHub/refs/heads/main/AutoQuest.lua"
-local success, response = pcall(function()
-    return HttpService:GetAsync(url)
-end)
-
-if success then
-    -- Execute the fetched Lua code
-    loadstring(response)()
-else
-    warn("Failed to fetch the script.")
 end
