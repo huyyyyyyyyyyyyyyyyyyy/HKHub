@@ -112,6 +112,38 @@ contentPanel.BackgroundColor3 = Color3.fromRGB(255, 240, 245)
 contentPanel.Parent = mainFrame
 contentPanel.CanvasSize = UDim2.new(0, 0, 2, 0)
 
+--// Biến kiểm soát trạng thái auto farm
+local autoFarmStates = {
+    ["Auto Fram"] = {enabled = false, script = nil},
+    ["Auto Frame Near"] = {enabled = false, script = nil},
+    ["Auto Fram Gem"] = {enabled = false, script = nil},
+    ["Auto Fram Boss"] = {enabled = false, script = nil}
+}
+
+--// Hàm kích hoạt/tắt auto farm cho từng nút
+local function toggleAutoFarm(feature)
+    local state = autoFarmStates[feature]
+    if not state.enabled then
+        -- Kích hoạt script từ link
+        local success, err = pcall(function()
+            state.script = loadstring(game:HttpGet("https://raw.githubusercontent.com/huyyyyyyyyyyyyyyyyyyy/HKHub/refs/heads/main/AutoQuest.lua"))()
+            print(feature .. " đã được kích hoạt!")
+        end)
+        if not success then
+            warn("Lỗi khi tải script " .. feature .. ": ", err)
+        end
+    else
+        -- Tắt script
+        if state.script then
+            state.script.isActive = false  -- Giả định script có biến isActive
+            game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false  -- Bỏ neo khi tắt
+            print(feature .. " đã được tắt!")
+        end
+        state.script = nil
+    end
+    state.enabled = not state.enabled
+end
+
 --// Add Categories
 local categories = {
     {"Fram", {"Auto Fram", "Auto Frame Near", "Auto Fram Gem", "Auto Fram Boss"}}
@@ -133,13 +165,19 @@ for i, cat in pairs(categories) do
     pageFrame.Parent = contentPanel
     
     for j, sub in pairs(cat[2]) do
-        local subButton = Instance.new("TextLabel")
+        local subButton = Instance.new("TextButton")
         subButton.Size = UDim2.new(1, 0, 0, 30)
         subButton.Position = UDim2.new(0, 0, 0, (j - 1) * 35)
-        subButton.Text = sub
+        subButton.Text = sub .. " (OFF)"  -- Khởi tạo trạng thái OFF
         subButton.BackgroundColor3 = Color3.fromRGB(255, 160, 180)
         subButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         subButton.Parent = pageFrame
+        
+        -- Thêm sự kiện click cho từng nút
+        subButton.MouseButton1Click:Connect(function()
+            toggleAutoFarm(sub)
+            subButton.Text = autoFarmStates[sub].enabled and (sub .. " (ON)") or (sub .. " (OFF)")
+        end)
     end
     categoryButton.MouseButton1Click:Connect(function()
         if activePage then activePage.Visible = false end
